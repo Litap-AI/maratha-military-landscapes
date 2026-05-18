@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maratha Military Landscapes - UNESCO World Heritage Interactive Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maratha: {
+                            saffron: '#FF6B00',
+                            saffronDark: '#D35400',
+                            charcoal: '#1A1C1E',
+                            stone: '#2D3135',
+                            gold: '#D97706',
+                            brass: '#F59E0B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Comfortaa and Afacad Flux style fonts (Merriweather and DM Sans equivalents) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #121314;
+        }
+        .serif-title {
+            font-family: 'Cinzel', serif;
+        }
+        /* Hide scrollbars for absolute clean dashboard layout */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-gray-100 overflow-hidden">
+
+    <div id="root"></div>
+
+    <!-- React and Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- React App Script -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Rich dataset for the 12 Maratha Military Landscape Forts (UNESCO 2025/2026 Inscription)
+        const fortsData = [
+            {
+                id: "raigad",
+                name: "Raigad Fort",
+                type: "Hill",
+                district: "Raigad",
+                coordinates: "18.2361° N, 73.4444° E",
+                elevation: "1,356 m",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv), (vi)",
+                description: "Selected by Chhatrapati Shivaji Maharaj as the permanent capital of the Maratha Empire in 1662 and the site of his historic Coronation (Rajyabhishek) in 1674. Strategically sculpted on an irregular wedge-shaped block of Sahyadri basalt with sheer vertical drops on three sides, making it a masterclass in strategic landscape engineering.",
+                fastFact: "Known as the 'Gibraltar of the East', it features the legendary Hirkani Cliff, a vertical precipice so steep that it was deemed unscalable.",
+                defenseFlow: [
+                    { step: "1", title: "Maha Darwaja", desc: "The colossal outer gateway flanked by massive watchtowers to funnel and ambush approaching forces." },
+                    { step: "2", title: "Hatti Talav", desc: "Immense rock-cut reservoirs guaranteeing uninterrupted freshwater supply during prolonged sieges." },
+                    { step: "3", title: "Takmak Tok", desc: "The punishment point on a sheer vertical cliff edge, doubling as a high-elevation strategic observation post." },
+                    { step: "4", title: "Mena Darwaja & Queen's Chambers", desc: "The royal residential quarters secured behind triple-layered secondary walls and watch stations." },
+                    { step: "5", title: "Balekilla (Citadel)", desc: "The innermost core containing Chhatrapati Shivaji's royal throne, built with independent access lines." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 120, cy: 300, name: "Maha Darwaja", id: 1 },
+                        { cx: 280, cy: 220, name: "Hatti Talav", id: 2 },
+                        { cx: 350, cy: 80, name: "Takmak Tok", id: 3 },
+                        { cx: 420, cy: 180, name: "Mena Darwaja", id: 4 },
+                        { cx: 550, cy: 150, name: "Balekilla (Citadel)", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "shivneri",
+                name: "Shivneri Fort",
+                type: "Hill",
+                district: "Pune",
+                coordinates: "19.1966° N, 73.8583° E",
+                elevation: "1,067 m",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "The revered birthplace of Chhatrapati Shivaji Maharaj. Developed with an ingenious triangular geometry guarding ancient military-trade passes connecting the Deccan Plateau to the Konkan coast. It features a system of seven highly defensive progressive gateways designed to trap enemy forces in sequential killing zones.",
+                fastFact: "Features deep rock-cut Ganga and Yamuna springs that maintain potable drinking water at over 1,000 meters altitude year-round.",
+                defenseFlow: [
+                    { step: "1", title: "Maha Darwaja (Gate 1)", desc: "The first line of defense at the base of the massive volcanic scarp." },
+                    { step: "2", title: "Sequential Gates 2-6", desc: "Pir, Ganesh, Shivai, Pancha, and Hathi gates with sharp-angled traps to prevent elephant battering." },
+                    { step: "3", title: "Kulambacha Chouthara", desc: "Underground barracks for elite garrison forces situated strategically along the ridge." },
+                    { step: "4", title: "Shiv-Janmasthan", desc: "The secure stone-masonry chambers where Chhatrapati Shivaji Maharaj was born." },
+                    { step: "5", title: "Koli Chouthara (Apex)", desc: "High bastion lookout overlooking the entire Junnar valley and adjacent mountain passes." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 100, cy: 350, name: "Maha Darwaja", id: 1 },
+                        { cx: 220, cy: 260, name: "Sequential Gates (1-6)", id: 2 },
+                        { cx: 340, cy: 200, name: "Barracks Area", id: 3 },
+                        { cx: 480, cy: 120, name: "Shiv-Janmasthan", id: 4 },
+                        { cx: 580, cy: 80, name: "Koli Chouthara (Apex)", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "lohgad",
+                name: "Lohgad Fort",
+                type: "Hill",
+                district: "Pune",
+                coordinates: "18.7100° N, 73.4766° E",
+                elevation: "1,033 m",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Known as 'The Iron Fort' due to its virtually indestructible nature. Perched adjacent to Visapur Fort, it commanded absolute control over the highly critical ancient Bhor Ghat trade route. Its most spectacular feature is a long, narrow, defensive masonry ridge stretching outward like a scorpion's sting.",
+                fastFact: "Lohgad successfully withstood thirteen separate offensive assaults by various rival forces during its operational history.",
+                defenseFlow: [
+                    { step: "1", title: "Ganesh Darwaja", desc: "Outer fortified portal built with heavy iron spikes to repel siege elephants." },
+                    { step: "2", title: "Narayan & Hanuman Gates", desc: "Inner dual-gate switchback loops creating brutal crossfire zones for intruders." },
+                    { step: "3", title: "Lohkund Water Tank", desc: "A massive multi-tiered octagonal stepped well that served as the fort's primary reserve." },
+                    { step: "4", title: "Royal Cave Crypts", desc: "Underground structural vaults used to safely cache treasury wealth and heavy powder reserves." },
+                    { step: "5", title: "Vinchukata Projection", desc: "The scorpion-tail narrow rock tongue fortified with battlements to eliminate blind flanking maneuvers." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 90, cy: 320, name: "Ganesh Darwaja", id: 1 },
+                        { cx: 200, cy: 240, name: "Narayan & Hanuman Gates", id: 2 },
+                        { cx: 320, cy: 180, name: "Lohkund Reservoir", id: 3 },
+                        { cx: 440, cy: 130, name: "Treasury Crypts", id: 4 },
+                        { cx: 590, cy: 220, name: "Vinchukata Scorpion Ridge", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "khanderi",
+                name: "Khanderi Fort",
+                type: "Island",
+                district: "Raigad",
+                coordinates: "18.7038° N, 72.8133° E",
+                elevation: "Sea Level",
+                authority: "Directorate of Archaeology, Maharashtra",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "A heavily fortified island outpost built by Chhatrapati Shivaji Maharaj in 1679 off the Alibag coast. Khanderi was engineered specifically to check the growing naval aggression of the British East India Company and the Siddis of Murud-Janjira, cementing Maratha maritime sovereignty.",
+                fastFact: "The island featured defensive warning cannons made of special alloy metals designed to echo across several miles over water.",
+                defenseFlow: [
+                    { step: "1", title: "Protected Jetty", desc: "The sole landing point, heavily flanked by low-riding hidden gun bastions." },
+                    { step: "2", title: "Perimeter Sea Wall", desc: "Massive interlocking dry-stone masonry walls built to absorb both waves and heavy naval cannonades." },
+                    { step: "3", title: "Wet Ditch & Moat", desc: "Internal tidal channels preventing rapid ground rushes in the event of wall breaches." },
+                    { step: "4", title: "Underground Fresh Reservoirs", desc: "Ingenious rain-harvesting cavities excavated directly into the basalt core below sea level." },
+                    { step: "5", title: "Central Command Citadel", desc: "High elevated bastion hosting heavy iron cannons commanding a full 360-degree view of the shipping lanes." }
+                ],
+                svgMap: {
+                    terrain: "island",
+                    points: [
+                        { cx: 120, cy: 280, name: "Protected Landing Jetty", id: 1 },
+                        { cx: 250, cy: 320, name: "Perimeter Sea Wall", id: 2 },
+                        { cx: 340, cy: 210, name: "Tidal Wet Ditch", id: 3 },
+                        { cx: 430, cy: 170, name: "Underground Reservoirs", id: 4 },
+                        { cx: 540, cy: 130, name: "Central Gun Command", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "rajgad",
+                name: "Rajgad Fort",
+                type: "Hill",
+                district: "Pune",
+                coordinates: "18.2461° N, 73.6825° E",
+                elevation: "1,376 m",
+                authority: "Directorate of Archaeology, Maharashtra",
+                heritageTag: "Cultural Criterion (iii), (iv), (vi)",
+                description: "The primary and highly fortified seat of the Maratha Kingdom for nearly 26 years before the capital transitioned to Raigad. Known as 'The King of Forts', Rajgad is globally celebrated for its unique layout consisting of three giant radiating defensive spurs (Machi) and a formidable central citadel.",
+                fastFact: "Chhatrapati Shivaji's son, Rajaram, was born here, and the fort played host to major treaty signings and planning of key campaigns.",
+                defenseFlow: [
+                    { step: "1", title: "Gunjavane Darwaja", desc: "Highly secure mountain portal flanking steep pathways with direct arrow slits." },
+                    { step: "2", title: "Padmavati Machi", desc: "The first administrative plateau, containing the garrison barracks, offices, and protective temples." },
+                    { step: "3", title: "Sanjeevani Machi", desc: "A spectacular double-walled defensive ridge with deep underground escape hatches." },
+                    { step: "4", title: "Suvela Machi", desc: "Narrow strategic spur featuring a natural stone window and defensive watch stations." },
+                    { step: "5", title: "Balekilla (Sovereign Citadel)", desc: "The absolute crown peak, reachable only by climbing a vertical rock face with a single hidden gateway." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 80, cy: 220, name: "Gunjavane Gate", id: 1 },
+                        { cx: 220, cy: 150, name: "Padmavati Machi", id: 2 },
+                        { cx: 150, cy: 340, name: "Sanjeevani Machi", id: 3 },
+                        { cx: 480, cy: 320, name: "Suvela Machi", id: 4 },
+                        { cx: 360, cy: 120, name: "Balekilla (Sovereign Citadel)", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "pratapgad",
+                name: "Pratapgad Fort",
+                type: "Hill-Forest",
+                district: "Satara",
+                coordinates: "17.9358° N, 73.5786° E",
+                elevation: "1,080 m",
+                authority: "Directorate of Archaeology, Maharashtra",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Built in 1656 near Mahabaleshwar to guard the strategic Javali forest valley. Pratapgad is historically famous as the location of the legendary battle and dramatic personal duel between Chhatrapati Shivaji Maharaj and the towering Adilshahi General Afzal Khan in 1659, which catalyzed the rise of Maratha power.",
+                fastFact: "Constructed deep within the dense forest of the Javali basin, the fort remained entirely hidden from distant view until callers were right at its gates.",
+                defenseFlow: [
+                    { step: "1", title: "Concealed Outer Entrance", desc: "A sharp double-curved gateway entirely obscured by heavy, natural forest canopies." },
+                    { step: "2", title: "Lower Fort Bastions", desc: "A formidable wall system built overlooking the forest paths where Afzal Khan's army camped." },
+                    { step: "3", title: "Duel Pavilion Site", desc: "The historical clearing at the foot of the fort where the decisive leadership duel took place." },
+                    { step: "4", title: "Bhavani Temple", desc: "The spiritual center of the fort, housing a consecrated shrine of Goddess Bhavani." },
+                    { step: "5", title: "Upper Fort (Citadel)", desc: "The high-elevation stronghold protected by vertical cliffs and independent defense walls." }
+                ],
+                svgMap: {
+                    terrain: "forest",
+                    points: [
+                        { cx: 110, cy: 320, name: "Concealed Entrance", id: 1 },
+                        { cx: 220, cy: 260, name: "Lower Fort Bastions", id: 2 },
+                        { cx: 310, cy: 360, name: "Duel Pavilion Site", id: 3 },
+                        { cx: 440, cy: 180, name: "Bhavani Temple", id: 4 },
+                        { cx: 550, cy: 100, name: "Upper Fort Citadel", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "suvarnadurg",
+                name: "Suvarnadurg Fort",
+                type: "Island",
+                district: "Ratnagiri",
+                coordinates: "17.8163° N, 73.0844° E",
+                elevation: "Sea Level",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Known as 'The Golden Fort', this stunning island fortress is located in the Arabian Sea off the coast of Harnai. It served as a premier Maratha naval base and shipbuilding site, specifically under the legendary Admiral Kanhoji Angre, who defended the coast against European maritime colonial powers.",
+                fastFact: "Features a completely hidden main entrance cut into the natural rock face that can only be spotted from a short distance out at sea.",
+                defenseFlow: [
+                    { step: "1", title: "Sandy Shore Landing", desc: "The only beachhead where shallow draft vessels could touch the island's perimeter." },
+                    { step: "2", title: "Hidden Rock-Cut Portal", desc: "A masterfully carved entry doorway concealed behind massive natural rock outcrops." },
+                    { step: "3", title: "Coastal Gun Ports", desc: "A sequence of heavy stone embrasures designed to mount bronze and iron cannons facing the shipping channels." },
+                    { step: "4", title: "Internal Water Catchments", desc: "Dozens of deep rock-hewn water cisterns designed to catch every drop of monsoon rain." },
+                    { step: "5", title: "Kanakdurga Links", desc: "The strategic lookout chain connecting the island fort with mainland support batteries." }
+                ],
+                svgMap: {
+                    terrain: "island",
+                    points: [
+                        { cx: 130, cy: 330, name: "Sandy Landing Zone", id: 1 },
+                        { cx: 210, cy: 250, name: "Hidden Rock-Cut Portal", id: 2 },
+                        { cx: 360, cy: 210, name: "Coastal Gun Ports", id: 3 },
+                        { cx: 450, cy: 140, name: "Internal Water Cisterns", id: 4 },
+                        { cx: 560, cy: 220, name: "Kanakdurga Support Point", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "panhala",
+                name: "Panhala Fort",
+                type: "Hill-Plateau",
+                district: "Kolhapur",
+                coordinates: "16.8111° N, 74.1080° E",
+                elevation: "845 m",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "The largest and most strategically located fort in the southern Deccan plateau, controlling trade lanes connecting Kolhapur to coastal ports. It became the capital of the Maratha branch under Queen Regent Tarabai in the late 17th century, and is legendary for the daring midnight escape of Chhatrapati Shivaji Maharaj under siege.",
+                fastFact: "Features 'Amberkhana' - three massive granaries capable of storing over 25,000 maunds of grain, enabling resistance against multi-year sieges.",
+                defenseFlow: [
+                    { step: "1", title: "Teen Darwaja", desc: "A masterfully decorated triple-gate system featuring classical Islamic-style defensive designs." },
+                    { step: "2", title: "Sajja Kothi", desc: "A multi-storied stone palace block where Chhatrapati Shivaji held high-level defense council." },
+                    { step: "3", title: "Amberkhana Granaries", desc: "Colossal stone storehouses built to sustain a full military garrison for several years." },
+                    { step: "4", title: "Andhar Bavadi (Hidden Well)", desc: "A three-storied fortified stepwell designed to prevent the enemy from poisoning the water supply." },
+                    { step: "5", title: "Pusati Bastion", desc: "The high western bastion where heavy artillery was mounted to shatter siege engines." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 100, cy: 310, name: "Teen Darwaja Gateway", id: 1 },
+                        { cx: 250, cy: 180, name: "Sajja Kothi Palace", id: 2 },
+                        { cx: 380, cy: 230, name: "Amberkhana Granaries", id: 3 },
+                        { cx: 460, cy: 130, name: "Andhar Bavadi Stepwell", id: 4 },
+                        { cx: 570, cy: 160, name: "Pusati Bastion", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "vijaydurg",
+                name: "Vijaydurg Fort",
+                type: "Coastal",
+                district: "Sindhudurg",
+                coordinates: "16.5608° N, 73.3333° E",
+                elevation: "Sea Level",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Historically known as 'The Eastern Gibraltar' or Gheria. Located on the edge of the shallow, 40-kilometer Waghotan Creek, it is a formidable coastal peninsula fortress. Its shallow waters prevented heavy European battleships from approaching, while specialized agile Maratha warships operated freely out of hidden pockets.",
+                fastFact: "Chhatrapati Shivaji Maharaj personally restructured this fort, adding double-layered defense walls and a massive 200-meter-long underwater masonry wall.",
+                defenseFlow: [
+                    { step: "1", title: "Shallow Creek Barrier", desc: "A submerged stone wall designed to capsize deep-hull warships trying to enter." },
+                    { step: "2", title: "Jijamata Port Guard", desc: "A heavy outer bastion flanking the shallow river channel with low-angle cannon emplacements." },
+                    { step: "3", title: "Triple Outer Defensive Walls", desc: "Thick, interlocking basalt dry walls standing up to 36 feet high, built to absorb artillery hits." },
+                    { step: "4", title: "Hidden Dockyard Cavity", desc: "A concealed naval repair basin where Maratha ships could be retrofitted out of enemy sight." },
+                    { step: "5", title: "Central Command Citadel", desc: "A towering three-layered fort center holding command quarters and long-range guns." }
+                ],
+                svgMap: {
+                    terrain: "coastal",
+                    points: [
+                        { cx: 110, cy: 360, name: "Shallow Creek Barrier", id: 1 },
+                        { cx: 200, cy: 260, name: "Jijamata Port Guard", id: 2 },
+                        { cx: 320, cy: 190, name: "Triple Outer Walls", id: 3 },
+                        { cx: 450, cy: 230, name: "Hidden Dockyard", id: 4 },
+                        { cx: 560, cy: 140, name: "Central Command Citadel", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "sindhudurg",
+                name: "Sindhudurg Fort",
+                type: "Island",
+                district: "Sindhudurg",
+                coordinates: "16.0425° N, 73.4597° E",
+                elevation: "Sea Level",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Built by Chhatrapati Shivaji Maharaj in 1664 on the rocky islet of Kurte off Malvan. This legendary maritime bastion was designed to establish undisputed naval supremacy. The foundations of its massive walls were poured using molten lead to withstand the ferocious monsoon waves of the Arabian Sea.",
+                fastFact: "It is the only fort housing a dedicated, actively revered temple of Chhatrapati Shivaji Maharaj, built by his son Chhatrapati Rajaram.",
+                defenseFlow: [
+                    { step: "1", title: "Zig-Zag Hidden Entrance", desc: "A highly concealed gateway flanked by rounded bastions, invisible to any approaching ships." },
+                    { step: "2", title: "Molten-Lead Footings", desc: "The thick, low-tide basalt walls bonded with molten lead to absorb heavy waves and battery." },
+                    { step: "3", title: "Sweetwater Wells", desc: "Three legendary fresh-water wells (Dahi, Sakhar, Dudh) situated on a saltwater island." },
+                    { step: "4", title: "Shivaji Maharaj Temple", desc: "A historic stone temple housing a likeness of Chhatrapati Shivaji wearing a simple sailor's cap." },
+                    { step: "5", title: "Flag Bastion (Apex)", desc: "The highest southern bastion hoisting the Maratha saffron standard, with dual coastal cannons." }
+                ],
+                svgMap: {
+                    terrain: "island",
+                    points: [
+                        { cx: 140, cy: 310, name: "Zig-Zag Hidden Entry", id: 1 },
+                        { cx: 230, cy: 220, name: "Molten-Lead Footings", id: 2 },
+                        { cx: 350, cy: 180, name: "Sweetwater Wells", id: 3 },
+                        { cx: 440, cy: 240, name: "Shivaji Maharaj Temple", id: 4 },
+                        { cx: 560, cy: 150, name: "Flag Bastion (Apex)", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "salher",
+                name: "Salher Fort",
+                type: "Hill",
+                district: "Nashik",
+                coordinates: "20.7225° N, 73.9425° E",
+                elevation: "1,567 m",
+                authority: "Directorate of Archaeology, Maharashtra",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "The highest fort peak in the Sahyadri mountains of Maharashtra and the second highest peak overall. Salher is historically celebrated as the site of the massive and bloody Battle of Salher in 1672, where a unified Maratha army defeated a heavy Mughal imperial army in open field combat.",
+                fastFact: "Its extreme altitude allowed it to act as a colossal natural lookout post, signaling to other forts in a 50-mile radius.",
+                defenseFlow: [
+                    { step: "1", title: "Multiple Colossal Escarpments", desc: "Extremely steep stone pathways cut into sheer vertical basalt cliffs." },
+                    { step: "2", title: "Cave Garrisons", desc: "Vast rock-cut caves used to shelter thousands of soldiers and high-yield dry goods." },
+                    { step: "3", title: "Fortified Switchbacks", desc: "A series of high-altitude stone ramparts with interlocking fire-support stations." },
+                    { step: "4", title: "High Water Cisterns", desc: "Natural reservoirs fed by condensation and seasonal rain, carved into solid volcanic rock." },
+                    { step: "5", title: "Parshuram Temple Peak", desc: "The holy peak shrine and strategic command post offering a panoramic view of the plains." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 100, cy: 340, name: "Steep Escarpments", id: 1 },
+                        { cx: 210, cy: 260, name: "Cave Garrisons", id: 2 },
+                        { cx: 330, cy: 210, name: "Fortified Switchbacks", id: 3 },
+                        { cx: 450, cy: 150, name: "High Water Cisterns", id: 4 },
+                        { cx: 560, cy: 90, name: "Parshuram Peak", id: 5 }
+                    ]
+                }
+            },
+            {
+                id: "gingee",
+                name: "Gingee Fort",
+                type: "Hill",
+                district: "Villupuram, Tamil Nadu",
+                coordinates: "12.2505° N, 79.4013° E",
+                elevation: "240 m",
+                authority: "Archaeological Survey of India",
+                heritageTag: "Cultural Criterion (iii), (iv)",
+                description: "Often called the 'Troy of the East' by the British. Strategically located in Tamil Nadu, Gingee is built across three high-elevation granite hillocks (Rajagiri, Krishnagiri, and Chandragiri) connected by a massive triangular curtain wall, forming an impenetrable defense network in South India.",
+                fastFact: "Chhatrapati Shivaji Maharaj personally captured and upgraded Gingee in 1677, declaring it the most secure and impregnable fortress in the subcontinent.",
+                defenseFlow: [
+                    { step: "1", title: "Outer Perimeter Wall", desc: "A massive granite wall stretching over 13 kilometers, linking three separate rocky hills." },
+                    { step: "2", title: "Kalyana Mahal Palace", desc: "A spectacular multi-storied tower reflecting fusion architecture, situated in the secure lower valley." },
+                    { step: "3", title: "Krishnagiri Hill", desc: "The northern peak fortress engineered for rapid signaling and cavalry containment." },
+                    { step: "4", title: "Chandragiri Hill", desc: "The southern peak bastion featuring secure subterranean granaries and barracks." },
+                    { step: "5", title: "Rajagiri Peak (The Royal Citadel)", desc: "The absolute primary peak, separated from the lower fort by a natural 20-foot chasm crossed by a drawbridge." }
+                ],
+                svgMap: {
+                    terrain: "hill",
+                    points: [
+                        { cx: 100, cy: 290, name: "Granite Perimeter Wall", id: 1 },
+                        { cx: 240, cy: 230, name: "Kalyana Mahal Palace", id: 2 },
+                        { cx: 150, cy: 110, name: "Krishnagiri Hill", id: 3 },
+                        { cx: 340, cy: 350, name: "Chandragiri Hill", id: 4 },
+                        { cx: 540, cy: 120, name: "Rajagiri Royal Citadel", id: 5 }
+                    ]
+                }
+            }
+        ];
+
+        function App() {
+            const [selectedFort, setSelectedFort] = useState(fortsData[0]);
+            const [searchTerm, setSearchTerm] = useState("");
+            const [typeFilter, setTypeFilter] = useState("All");
+            const [activeFlowStep, setActiveFlowStep] = useState(0);
+            const [viewMode, setViewMode] = useState("interactive"); // 'interactive' or 'custom'
+
+            // Handle filtering based on Search & Type
+            const filteredForts = fortsData.filter(fort => {
+                const matchesSearch = fort.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                      fort.district.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesType = typeFilter === "All" || fort.type === typeFilter;
+                return matchesSearch && matchesType;
+            });
+
+            const handleFortSelect = (fort) => {
+                setSelectedFort(fort);
+                setActiveFlowStep(0); // reset step flow on selection change
+            };
+
+            return (
+                <div class="flex h-screen w-screen overflow-hidden bg-maratha-charcoal">
+                    
+                    {/* LEFT SIDEBAR (1/3 Screen) */}
+                    <aside class="w-full md:w-1/3 flex flex-col border-r border-gray-800 bg-maratha-charcoal h-full select-none z-10 shadow-2xl">
+                        {/* Header Branding */}
+                        <div class="p-6 border-b border-gray-800 bg-gradient-to-r from-maratha-charcoal to-maratha-stone">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-maratha-saffron text-white px-3 py-1.5 rounded-md font-bold text-sm tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-flag"></i> UNESCO
+                                </span>
+                                <h1 class="text-xs font-semibold uppercase tracking-widest text-maratha-brass">World Heritage Site</h1>
+                            </div>
+                            <h2 class="text-xl font-extrabold serif-title mt-2 text-gray-100 tracking-wide">
+                                Maratha Military Landscapes
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">
+                                India's 44th World Heritage Property &bull; 12 Legendary Forts
+                            </p>
+                        </div>
+
+                        {/* Search and Filters */}
+                        <div class="p-4 bg-maratha-stone border-b border-gray-800 flex flex-col gap-3">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                                <input 
+                                    type="text" 
+                                    placeholder="Search fort or district..."
+                                    class="w-full pl-10 pr-4 py-2.5 bg-maratha-charcoal border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-maratha-saffron transition-all"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Terrain Filter Pills */}
+                            <div class="flex gap-1 overflow-x-auto no-scrollbar pb-1 text-xs">
+                                {["All", "Hill", "Hill-Forest", "Hill-Plateau", "Coastal", "Island"].map((type) => (
+                                    <button
+                                        key={type}
+                                        class={`px-3 py-1.5 rounded-full whitespace-nowrap font-medium transition-all ${
+                                            typeFilter === type 
+                                                ? "bg-maratha-saffron text-white shadow-md shadow-maratha-saffron/20" 
+                                                : "bg-maratha-charcoal text-gray-400 hover:text-gray-200 border border-gray-800"
+                                        }`}
+                                        onClick={() => setTypeFilter(type)}
+                                    >
+                                        {type === "All" ? "All Terrains" : type}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Scrollable Forts List */}
+                        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-2.5 bg-maratha-charcoal/50">
+                            {filteredForts.length > 0 ? (
+                                filteredForts.map((fort) => (
+                                    <div 
+                                        key={fort.id}
+                                        onClick={() => handleFortSelect(fort)}
+                                        class={`group p-4 rounded-xl cursor-pointer border transition-all duration-300 flex items-center justify-between ${
+                                            selectedFort.id === fort.id 
+                                                ? "bg-gradient-to-r from-maratha-stone to-maratha-charcoal border-maratha-saffron/80 shadow-lg shadow-black/40" 
+                                                : "bg-maratha-stone/40 hover:bg-maratha-stone border-transparent"
+                                        }`}
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            {/* Terrain Icon Badge */}
+                                            <div class={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${
+                                                selectedFort.id === fort.id 
+                                                    ? "bg-maratha-saffron text-white" 
+                                                    : "bg-maratha-charcoal text-maratha-brass"
+                                            }`}>
+                                                {fort.type === "Hill" && <i class="fa-solid fa-mountain"></i>}
+                                                {fort.type === "Hill-Forest" && <i class="fa-solid fa-tree"></i>}
+                                                {fort.type === "Hill-Plateau" && <i class="fa-solid fa-layer-group"></i>}
+                                                {fort.type === "Coastal" && <i class="fa-solid fa-water"></i>}
+                                                {fort.type === "Island" && <i class="fa-solid fa-ship"></i>}
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-sm text-gray-100 group-hover:text-maratha-saffron transition-colors">
+                                                    {fort.name}
+                                                </h3>
+                                                <p class="text-xs text-gray-400">
+                                                    {fort.district}, {fort.type === "Hill-Forest" ? "Forest" : fort.type === "Hill-Plateau" ? "Plateau" : fort.type} Fort
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <i class={`fa-solid fa-chevron-right text-xs transition-transform duration-300 ${
+                                            selectedFort.id === fort.id ? "text-maratha-saffron translate-x-1" : "text-gray-600"
+                                        }`}></i>
+                                    </div>
+                                ))
+                            ) : (
+                                <div class="text-center py-12 text-gray-500 text-sm">
+                                    <i class="fa-solid fa-ban mb-2 text-xl block text-gray-600"></i>
+                                    No forts matched your filters.
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Footer Info */}
+                        <div class="p-4 border-t border-gray-800 bg-maratha-stone text-[10px] text-gray-500 flex justify-between items-center">
+                            <span>Designed for Maratha History Research</span>
+                            <span>v1.2 &bull; Active State</span>
+                        </div>
+                    </aside>
+
+                    {/* RIGHT CONTENT AREA (2/3 Screen) */}
+                    <main class="hidden md:flex flex-1 flex-col h-full bg-[#151718] overflow-y-auto no-scrollbar relative">
+                        
+                        {/* Interactive Mode Selector Header */}
+                        <div class="p-6 border-b border-gray-800 bg-maratha-charcoal flex justify-between items-center sticky top-0 z-20 shadow-md">
+                            <div>
+                                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-maratha-saffron">
+                                    <i class="fa-solid fa-shield"></i> Tactical Analysis
+                                </div>
+                                <h2 class="text-3xl font-extrabold serif-title text-gray-100 flex items-center gap-3">
+                                    {selectedFort.name}
+                                    <span class="text-xs font-normal tracking-wide py-1 px-3.5 bg-maratha-stone/80 text-maratha-brass rounded-full border border-maratha-brass/30">
+                                        {selectedFort.type} Terrain
+                                    </span>
+                                </h2>
+                            </div>
+
+                            {/* Mode Toggler (Vector SVG Map vs Real Images) */}
+                            <div class="flex bg-maratha-stone p-1 rounded-lg border border-gray-800 text-xs">
+                                <button 
+                                    onClick={() => setViewMode("interactive")}
+                                    class={`px-3 py-1.5 rounded-md font-semibold transition-all flex items-center gap-2 ${
+                                        viewMode === "interactive" 
+                                            ? "bg-maratha-saffron text-white shadow-sm" 
+                                            : "text-gray-400 hover:text-gray-200"
+                                    }`}
+                                >
+                                    <i class="fa-solid fa-compass-drafting"></i> Dynamic Blueprints
+                                </button>
+                                <button 
+                                    onClick={() => setViewMode("custom")}
+                                    class={`px-3 py-1.5 rounded-md font-semibold transition-all flex items-center gap-2 ${
+                                        viewMode === "custom" 
+                                            ? "bg-maratha-saffron text-white shadow-sm" 
+                                            : "text-gray-400 hover:text-gray-200"
+                                    }`}
+                                >
+                                    <i class="fa-solid fa-images"></i> Custom Git Images
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Dynamic Details Block */}
+                        <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Left Text Detail */}
+                            <div class="lg:col-span-2 space-y-4">
+                                <h3 class="text-lg font-bold text-gray-200 border-l-4 border-maratha-saffron pl-3">Historical Context & Strategy</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed text-justify">
+                                    {selectedFort.description}
+                                </p>
+                                <div class="bg-gradient-to-r from-maratha-stone/40 to-transparent p-4 rounded-xl border border-gray-800/60 flex gap-3 items-start">
+                                    <i class="fa-solid fa-lightbulb text-maratha-brass mt-1 text-lg"></i>
+                                    <div>
+                                        <h4 class="text-xs font-bold uppercase tracking-wider text-maratha-brass">Outstanding Strategic Value</h4>
+                                        <p class="text-xs text-gray-400 mt-1 italic">
+                                            "{selectedFort.fastFact}"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Fast stats grid */}
+                            <div class="bg-maratha-stone/30 p-5 rounded-xl border border-gray-800/80 flex flex-col justify-between space-y-3">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-maratha-brass border-b border-gray-800 pb-2">Technical Properties</h3>
+                                <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-xs">
+                                    <div>
+                                        <p class="text-gray-500">District Location</p>
+                                        <p class="font-bold text-gray-200">{selectedFort.district}, MH</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Elevation</p>
+                                        <p class="font-bold text-gray-200">{selectedFort.elevation}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Authority Jurisdiction</p>
+                                        <p class="font-bold text-gray-200 truncate" title={selectedFort.authority}>{selectedFort.authority}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">GPS Coordinates</p>
+                                        <p class="font-bold text-gray-200">{selectedFort.coordinates}</p>
+                                    </div>
+                                </div>
+                                <div class="pt-3 border-t border-gray-800/60 text-center">
+                                    <span class="text-[10px] bg-emerald-950/40 text-emerald-400 border border-emerald-900/40 py-1 px-2.5 rounded-full inline-flex items-center gap-1.5 font-bold">
+                                        <i class="fa-solid fa-circle-check"></i> UNESCO Inscribed WHS
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Interactive Visuals Area (Maps / Diagrams) */}
+                        <div class="p-6 pt-0 flex flex-col gap-6 flex-1">
+                            
+                            {/* Two Maps Grid */}
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                                
+                                {/* MAP 1: Geographical Terrain & Core */}
+                                <div class="bg-maratha-stone/20 rounded-xl p-5 border border-gray-800 flex flex-col h-[340px]">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="text-xs font-bold uppercase tracking-widest text-maratha-brass">
+                                            Map 1 &bull; Topographical Context
+                                        </h4>
+                                        <span class="text-[10px] bg-maratha-charcoal text-gray-400 py-1 px-2.5 rounded-md border border-gray-800">
+                                            Terrain: {selectedFort.type} Base
+                                        </span>
+                                    </div>
+
+                                    <div class="flex-1 bg-maratha-charcoal rounded-lg relative overflow-hidden flex items-center justify-center border border-gray-800/80 shadow-inner">
+                                        {viewMode === "interactive" ? (
+                                            /* Beautiful styled vector map blueprint reflecting topographic elements */
+                                            <div class="relative w-full h-full p-4 flex flex-col justify-between">
+                                                {/* Simulated Topo lines in background */}
+                                                <svg class="absolute inset-0 w-full h-full opacity-15" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="50%" cy="50%" r="40" fill="none" stroke="white" stroke-width="0.5" />
+                                                    <circle cx="50%" cy="50%" r="80" fill="none" stroke="white" stroke-width="0.5" stroke-dasharray="2 2" />
+                                                    <circle cx="50%" cy="50%" r="140" fill="none" stroke="white" stroke-width="0.5" />
+                                                    <circle cx="50%" cy="50%" r="200" fill="none" stroke="white" stroke-width="0.5" />
+                                                </svg>
+
+                                                {/* Customized vector representing fortress terrain type */}
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    {selectedFort.svgMap.terrain === "hill" && (
+                                                        <div class="w-48 h-48 rounded-full bg-orange-950/20 border-2 border-orange-500/20 flex items-center justify-center animate-pulse">
+                                                            <i class="fa-solid fa-mountain text-8xl text-maratha-saffron/10"></i>
+                                                        </div>
+                                                    )}
+                                                    {selectedFort.svgMap.terrain === "island" && (
+                                                        <div class="w-48 h-48 rounded-full bg-cyan-950/20 border-2 border-cyan-500/20 flex items-center justify-center animate-pulse">
+                                                            <i class="fa-solid fa-water text-8xl text-cyan-500/10"></i>
+                                                        </div>
+                                                    )}
+                                                    {selectedFort.svgMap.terrain === "forest" && (
+                                                        <div class="w-48 h-48 rounded-full bg-emerald-950/20 border-2 border-emerald-500/20 flex items-center justify-center animate-pulse">
+                                                            <i class="fa-solid fa-tree text-8xl text-emerald-500/10"></i>
+                                                        </div>
+                                                    )}
+                                                    {selectedFort.svgMap.terrain === "coastal" && (
+                                                        <div class="w-48 h-48 rounded-full bg-sky-950/20 border-2 border-sky-500/20 flex items-center justify-center animate-pulse">
+                                                            <i class="fa-solid fa-anchor text-8xl text-sky-500/10"></i>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Radar sweep simulation to make it look premium/tactical */}
+                                                <div class="absolute right-4 top-4 text-xs text-maratha-brass font-bold flex items-center gap-1.5 bg-maratha-stone/80 px-2 py-1 rounded border border-maratha-brass/20">
+                                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> Live Terrain Analysis
+                                                </div>
+
+                                                <div class="z-10 text-center mt-auto">
+                                                    <p class="text-xs text-gray-400">Tactical Ridge Elevation & Bastion Layout Mapping</p>
+                                                    <p class="text-[10px] text-gray-500 mt-0.5">Basalt Stone Footings & Layered Slopes Grid</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* fallback to real local GitHub path with instructions */
+                                            <div class="p-6 text-center text-xs text-gray-400 h-full flex flex-col justify-center items-center">
+                                                <img 
+                                                    src={`images/${selectedFort.id}_geo.jpg`} 
+                                                    alt="Geographical Map"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.style.display = 'none';
+                                                    }}
+                                                    class="absolute inset-0 w-full h-full object-cover rounded-lg"
+                                                />
+                                                <div class="z-10 bg-maratha-charcoal/90 p-4 rounded-xl border border-gray-800">
+                                                    <i class="fa-solid fa-file-image text-3xl text-maratha-saffron mb-2"></i>
+                                                    <p class="font-bold">Git Asset Target:</p>
+                                                    <code class="block text-maratha-brass my-1 p-1 bg-maratha-stone rounded select-all">
+                                                        images/{selectedFort.id}_geo.jpg
+                                                    </code>
+                                                    <p class="text-gray-500 mt-1">Upload your file to this path in GitHub to load it automatically.</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* MAP 2: Architectural Layout & Defensive Structures */}
+                                <div class="bg-maratha-stone/20 rounded-xl p-5 border border-gray-800 flex flex-col h-[340px]">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="text-xs font-bold uppercase tracking-widest text-maratha-brass">
+                                            Map 2 &bull; Architectural Blueprint
+                                        </h4>
+                                        <span class="text-[10px] text-maratha-saffron bg-maratha-saffron/10 border border-maratha-saffron/20 py-1 px-2.5 rounded-md font-semibold">
+                                            Click steps to locate
+                                        </span>
+                                    </div>
+
+                                    <div class="flex-1 bg-maratha-charcoal rounded-lg relative overflow-hidden flex items-center justify-center border border-gray-800/80 shadow-inner">
+                                        {viewMode === "interactive" ? (
+                                            /* Fully Interactive SVG Vector Fortress Plan */
+                                            <div class="relative w-full h-full">
+                                                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                                                    
+                                                    {/* Outer walls layout line representing fortress layout */}
+                                                    <path d="M 120 300 Q 180 260 280 220 T 420 180 T 550 150 L 590 220 L 450 280 L 320 340 Z" 
+                                                          fill="none" stroke="#2a2e32" stroke-width="4" stroke-dasharray="5 5" />
+                                                    
+                                                    {/* Primary defensive stone boundary trace */}
+                                                    <path d="M 120 300 Q 180 260 280 220 T 420 180 T 550 150 L 590 220 L 450 280 L 320 340 Z" 
+                                                          fill="none" stroke="#e67e22" stroke-opacity="0.3" stroke-width="12" />
+
+                                                    {/* Connective active path visualization dynamically tracing the defense flow step */}
+                                                    {activeFlowStep >= 0 && (
+                                                        <path d="M 120 300 Q 180 260 280 220 T 420 180 T 550 150" 
+                                                              fill="none" stroke="#FF6B00" stroke-width="2.5" class="transition-all duration-500" />
+                                                    )}
+
+                                                    {/* Interactive node markers on Map */}
+                                                    {selectedFort.svgMap.points.map((pt, idx) => (
+                                                        <g 
+                                                            key={pt.id} 
+                                                            class="cursor-pointer group"
+                                                            onClick={() => setActiveFlowStep(idx)}
+                                                        >
+                                                            {/* Highlight Glow outer circle */}
+                                                            <circle 
+                                                                cx={pt.cx} 
+                                                                cy={pt.cy} 
+                                                                r={idx === activeFlowStep ? "20" : "12"} 
+                                                                fill={idx === activeFlowStep ? "rgba(255,107,0,0.2)" : "rgba(217,119,6,0.1)"} 
+                                                                class="transition-all duration-300 animate-pulse"
+                                                            />
+                                                            {/* Inner core dot */}
+                                                            <circle 
+                                                                cx={pt.cx} 
+                                                                cy={pt.cy} 
+                                                                r={idx === activeFlowStep ? "7" : "4.5"} 
+                                                                fill={idx === activeFlowStep ? "#FF6B00" : "#D97706"} 
+                                                                class="transition-all duration-300"
+                                                            />
+                                                            {/* Label */}
+                                                            <text 
+                                                                x={pt.cx} 
+                                                                y={pt.cy - (idx === activeFlowStep ? 24 : 16)} 
+                                                                text-anchor="middle" 
+                                                                fill={idx === activeFlowStep ? "#FF6B00" : "#9CA3AF"} 
+                                                                class="text-[10px] font-bold tracking-wide transition-all select-none"
+                                                            >
+                                                                {pt.name}
+                                                            </text>
+                                                        </g>
+                                                    ))}
+                                                </svg>
+
+                                                {/* On-Map HUD indicator */}
+                                                <div class="absolute bottom-4 left-4 text-[10px] text-gray-500 bg-maratha-charcoal/80 px-2 py-1.5 rounded border border-gray-800">
+                                                    <p>Scale: 1:4000 &bull; Orthogonal Projections</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* fallback to custom folder for second map image */
+                                            <div class="p-6 text-center text-xs text-gray-400 h-full flex flex-col justify-center items-center">
+                                                <img 
+                                                    src={`images/${selectedFort.id}_layout.jpg`} 
+                                                    alt="Architectural Map"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.style.display = 'none';
+                                                    }}
+                                                    class="absolute inset-0 w-full h-full object-cover rounded-lg"
+                                                />
+                                                <div class="z-10 bg-maratha-charcoal/90 p-4 rounded-xl border border-gray-800">
+                                                    <i class="fa-solid fa-file-image text-3xl text-maratha-saffron mb-2"></i>
+                                                    <p class="font-bold">Git Asset Target:</p>
+                                                    <code class="block text-maratha-brass my-1 p-1 bg-maratha-stone rounded select-all">
+                                                        images/{selectedFort.id}_layout.jpg
+                                                    </code>
+                                                    <p class="text-gray-500 mt-1">Upload your file to this path in GitHub to load it automatically.</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* FLOW DIAGRAM SECTION (Sequential Defense Funnel) */}
+                            <div class="bg-maratha-stone/20 rounded-xl p-5 border border-gray-800 flex flex-col">
+                                <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
+                                    <div>
+                                        <h4 class="text-xs font-bold uppercase tracking-widest text-maratha-brass">
+                                            Section 3 &bull; Strategic Defensive Flow & Entry Corridor
+                                        </h4>
+                                        <p class="text-[10px] text-gray-500">
+                                            How Maratha forces structured progressive security checkpoints to trap hostile forces
+                                        </p>
+                                    </div>
+                                    <span class="text-xs font-semibold text-gray-400">
+                                        Active Step: {activeFlowStep + 1} of {selectedFort.defenseFlow.length}
+                                    </span>
+                                </div>
+
+                                <div class="flex flex-col lg:flex-row gap-4 items-stretch justify-between w-full">
+                                    {selectedFort.defenseFlow.map((stepData, index) => (
+                                        <div 
+                                            key={stepData.step}
+                                            onClick={() => setActiveFlowStep(index)}
+                                            class={`flex-1 p-4 rounded-xl cursor-pointer border transition-all duration-300 relative ${
+                                                activeFlowStep === index 
+                                                    ? "bg-maratha-saffron/10 border-maratha-saffron shadow-lg shadow-maratha-saffron/5" 
+                                                    : "bg-maratha-charcoal border-gray-800 hover:border-gray-700"
+                                            }`}
+                                        >
+                                            {/* Connector line between steps */}
+                                            {index < selectedFort.defenseFlow.length - 1 && (
+                                                <div class="hidden lg:block absolute top-1/2 -right-3 w-6 h-[2px] bg-gray-800 z-10"></div>
+                                            )}
+
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class={`w-5 h-5 text-[10px] font-extrabold rounded-full flex items-center justify-center ${
+                                                    activeFlowStep === index 
+                                                        ? "bg-maratha-saffron text-white" 
+                                                        : "bg-maratha-stone text-gray-400"
+                                                }`}>
+                                                    {stepData.step}
+                                                </span>
+                                                <h5 class={`font-bold text-xs uppercase tracking-wide truncate ${
+                                                    activeFlowStep === index ? "text-maratha-saffron" : "text-gray-300"
+                                                }`}>
+                                                    {stepData.title}
+                                                </h5>
+                                            </div>
+                                            <p class="text-[11px] text-gray-400 line-clamp-3">
+                                                {stepData.desc}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Flow custom upload target indicator */}
+                                {viewMode === "custom" && (
+                                    <div class="mt-4 p-3 bg-maratha-charcoal rounded-lg border border-gray-800 text-[11px] text-gray-400 text-center">
+                                        <i class="fa-solid fa-code-merge text-maratha-saffron mr-2"></i>
+                                        Custom defense flow diagram file path: <code class="bg-maratha-stone p-1 rounded text-maratha-brass select-all">images/{selectedFort.id}_flow.jpg</code>
+                                    </div>
+                                )}
+                            </div>
+
+                        </div>
+
+                    </main>
+
+                    {/* MOBILE FALLBACK INFO PANEL */}
+                    <div class="md:hidden flex-1 flex flex-col justify-center items-center p-6 text-center bg-[#151718]">
+                        <i class="fa-solid fa-desktop text-5xl text-maratha-saffron mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-200">Interactive Dashboard</h3>
+                        <p class="text-sm text-gray-400 mt-2 max-w-xs">
+                            Please open this dashboard on a desktop screen or tablet device to view the dynamic map blueprints and high-fidelity military diagrams.
+                        </p>
+                        <div class="mt-6 p-4 bg-maratha-charcoal/80 border border-gray-800 rounded-xl text-left w-full text-xs">
+                            <h4 class="font-extrabold text-maratha-brass uppercase tracking-wider mb-2">Selected Fort: {selectedFort.name}</h4>
+                            <p class="text-gray-300">{selectedFort.description}</p>
+                            <p class="mt-2 text-gray-500">Elevation: {selectedFort.elevation} &bull; Dist: {selectedFort.district}</p>
+                        </div>
+                    </div>
+
+                </div>
+            );
+        }
+
+        // Render the application into DOM
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+```
