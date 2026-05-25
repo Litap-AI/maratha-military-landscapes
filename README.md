@@ -70,3 +70,10 @@ Babel Standalone - Compiles the React JSX syntax directly in the user's browser,
 
 This project was built to document, preserve, and celebrate the incredible military history of India. All geographical data and structural notes are compiled from archaeological surveys, academic papers, and official drafts of the UNESCO World Heritage nomination dossier.
 If you have higher resolution maps, historic blueprints, or updated flow diagrams for any of these forts, feel free to compress them and submit a pull request!
+
+
+---
+
+## Author
+
+Rohit Patil
