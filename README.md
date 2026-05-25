@@ -1,3 +1,5 @@
+![Maratha Military Landscapes Banner](images/banner.png)
+
 🏰 Maratha Military Landscapes: UNESCO Interactive Dashboard
 
 Welcome to the Maratha Military Landscapes Dashboard—an interactive, single-page React application designed to showcase the awe-inspiring engineering, strategic defense systems, and geographical brilliance of the 12 Maratha forts nominated for the UNESCO World Heritage list.
