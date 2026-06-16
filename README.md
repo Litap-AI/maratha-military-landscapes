@@ -4,6 +4,7 @@
 
 Welcome to the Maratha Military Landscapes Dashboard—an interactive, single-page React application designed to showcase the awe-inspiring engineering, strategic defense systems, and geographical brilliance of the 12 Maratha forts nominated for the UNESCO World Heritage list.
 This dashboard offers an immersive split-screen experience (1/3 interactive list, 2/3 dynamic workspace) highlighting the brilliant military architecture developed under the visionary leadership of Chhatrapati Shivaji Maharaj and subsequent Maratha rulers.
+
 ---
 
 ## 🌟 Features
@@ -81,6 +82,7 @@ This project was built to document, preserve, and celebrate the incredible milit
 If you have higher resolution maps, historic blueprints, or updated flow diagrams for any of these forts, feel free to compress them and submit a pull request!
 
 ---
-## Author
+## ✍🏻Author
 
 Rohit Patil
+-
