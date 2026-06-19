@@ -82,7 +82,11 @@ This project was built to document, preserve, and celebrate the incredible milit
 If you have higher resolution maps, historic blueprints, or updated flow diagrams for any of these forts, feel free to compress them and submit a pull request!
 
 ---
+## License 
+Copyright © 2026 rohitmanikraopatil.com
+
+---
 ## ✍🏻Author
 
 Rohit Patil
--
+---
