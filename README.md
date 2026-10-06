@@ -88,5 +88,5 @@ Copyright © 2026 rohitmanikraopatil.com
 ---
 ## ✍🏻Author
 
-Rohit Patil
+Rohit Manikrao Patil
 ---
